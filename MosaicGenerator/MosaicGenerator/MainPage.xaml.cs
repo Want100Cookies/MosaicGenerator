@@ -41,7 +41,7 @@ namespace MosaicGenerator
 
             folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
             folderPicker.FileTypeFilter.Add("*");
-            
+
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
 
             if (folder != null)
@@ -60,44 +60,35 @@ namespace MosaicGenerator
                 var query = folder.CreateFileQueryWithOptions(queryOptions);
                 IReadOnlyList<StorageFile> fileList = await query.GetFilesAsync();
 
-                ILookup<Color, StorageFile> images = fileList.AsParallel()
+                ILookup<Color, StorageFile> images = fileList
                     .ToLookup(file =>
                     {
-                        Debug.WriteLine("Start " + file.Name);
-
                         Stream imageStream = file.OpenStreamForReadAsync().Result;
-
-                        Debug.WriteLine("Imagestream " + file.Name);
 
                         Color average = new Color();
 
                         var runSync = Task.Factory.StartNew(async () =>
                         {
                             BitmapDecoder decoder = await BitmapDecoder.CreateAsync(imageStream.AsRandomAccessStream());
-                            Debug.WriteLine("Decoder " + file.Name);
 
                             BitmapDecoderWrapper wrapper = new BitmapDecoderWrapper(decoder);
                             average = await wrapper.GetAverageColor();
 
-                            Debug.WriteLine("Start " + file.Name);
-
                         }).Unwrap();
-                        
+
                         runSync.Wait();
-                        
+
                         return average;
                     }, file => file);
 
-                foreach (IGrouping<Color, List<StorageFile>> color in images)
+
+                foreach (IGrouping<Color, StorageFile> color in images)
                 {
-                    foreach (StorageFile file in color.SelectMany(file => file))
+
+                    foreach (StorageFile file in color)
                     {
-                        var text = new TextBlock()
-                        {
-                            Text = color.Key.ToString() + " " + file.Name
-                        };
-                        ImageList.Items.Add(text);
-                    }                    
+                        Debug.WriteLine($"File: {file.Name}, Color: {color.Key.ToString()} {color.Key.R} {color.Key.G} {color.Key.B}");
+                    }
                 }
 
                 await new MessageDialog("Done").ShowAsync();

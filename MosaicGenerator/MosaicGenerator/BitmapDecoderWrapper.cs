@@ -70,13 +70,13 @@ namespace MosaicGenerator
                 b += pixels[i + 2];
             }
 
-            r = r / total;
-            g = g / total;
-            b = b / total;
+            r = (int) Math.Round((decimal)(r / total));
+            g = (int) Math.Ceiling((decimal)(g / total));
+            b = (int) Math.Ceiling((decimal)(b / total));
 
             Color color = Color.FromArgb(0, (byte)r, (byte)g, (byte)b); ;
 
-            Debug.WriteLine("Calculated " + (byte)r + " " + (byte)g + " " + (byte)b);
+            //Debug.WriteLine("Calculated " + (byte)r + " " + (byte)g + " " + (byte)b);
 
             return color;
         }
