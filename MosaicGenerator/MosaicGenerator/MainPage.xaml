@@ -8,6 +8,8 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button Content="Select source folder" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <ListView x:Name="ImageList" HorizontalAlignment="Left" Height="700" Margin="184,10,0,0" VerticalAlignment="Top" Width="1086"/>
 
     </Grid>
 </Page>
