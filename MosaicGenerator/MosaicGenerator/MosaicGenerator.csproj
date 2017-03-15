@@ -94,12 +94,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IAverageColorCalculator.cs" />
+    <Compile Include="Abstractions\IFolderReader.cs" />
     <Compile Include="Abstractions\IImageReader.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BitmapDecoderWrapper.cs" />
     <Compile Include="Implementations\AverageColorCalculator.cs" />
+    <Compile Include="Implementations\FolderReader.cs" />
+    <Compile Include="Implementations\ImageReader.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

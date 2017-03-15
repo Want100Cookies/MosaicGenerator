@@ -5,6 +5,6 @@ namespace MosaicGenerator.Abstractions
 {
     public interface IImageReader
     {
-        Task<Color[]> ReadImage(string path);
+        Task<Color[]> ReadImageAsync(string path);
     }
 }

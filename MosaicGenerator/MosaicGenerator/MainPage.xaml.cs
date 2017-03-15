@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MosaicGenerator.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -37,66 +38,51 @@ namespace MosaicGenerator
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            FolderPicker folderPicker = new FolderPicker();
-
-            folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            folderPicker.FileTypeFilter.Add("*");
-
-            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            FolderReader folderReader = new FolderReader();
+            StorageFolder folder = await folderReader.PickFolderAsync();
 
             if (folder != null)
             {
-                // Application now has read/write access to all contents in the picked folder
-                // (including other sub-folder contents)
-                Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+                string[] filePaths = await folderReader.ReadFolderAsync(folder);
 
-                List<string> fileTypeFilter = new List<string>();
-                fileTypeFilter.Add(".jpg");
-                fileTypeFilter.Add(".png");
-                fileTypeFilter.Add(".bmp");
-                var queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter);
+                ImageReader imageReader = new ImageReader();
+                AverageColorCalculator calculator = new AverageColorCalculator();
 
-                // Create query and retrieve files
-                var query = folder.CreateFileQueryWithOptions(queryOptions);
-                IReadOnlyList<StorageFile> fileList = await query.GetFilesAsync();
+                Dictionary<Color, List<string>> files = new Dictionary<Color, List<string>>();
 
-                ILookup<Color, StorageFile> images = fileList
-                    .ToLookup(file =>
-                    {
-                        Stream imageStream = file.OpenStreamForReadAsync().Result;
-
-                        Color average = new Color();
-
-                        var runSync = Task.Factory.StartNew(async () =>
-                        {
-                            BitmapDecoder decoder = await BitmapDecoder.CreateAsync(imageStream.AsRandomAccessStream());
-
-                            BitmapDecoderWrapper wrapper = new BitmapDecoderWrapper(decoder);
-                            average = await wrapper.GetAverageColor();
-
-                        }).Unwrap();
-
-                        runSync.Wait();
-
-                        return average;
-                    }, file => file);
-
-
-                foreach (IGrouping<Color, StorageFile> color in images)
+                var tasks = filePaths.Select(async filePath =>
                 {
+                    Color[] colors = await imageReader.ReadImageAsync(filePath);
+                    Color average = await calculator.CalculateAverage(colors);
 
-                    foreach (StorageFile file in color)
+                    List<string> filesWithColor;
+
+                    if (files.TryGetValue(average, out filesWithColor))
                     {
-                        Debug.WriteLine($"File: {file.Name}, Color: {color.Key.ToString()} {color.Key.R} {color.Key.G} {color.Key.B}");
+                        filesWithColor.Add(filePath);
+                    }
+                    else
+                    {
+                        files.Add(average, new List<string>() { filePath });
+                    }
+                });
+
+                await Task.WhenAll(tasks);
+
+                foreach (KeyValuePair<Color, List<string>> fileWithColor in files)
+                {
+                    foreach (string path in fileWithColor.Value)
+                    {
+                        ImageList.Items.Add(new TextBlock()
+                        {
+                            Text = $"{fileWithColor.Key.ToString()} in {path}"
+                        });
                     }
                 }
 
                 await new MessageDialog("Done").ShowAsync();
             }
-            else
-            {
-                await new MessageDialog("Canceled").ShowAsync();
-            }
+
         }
     }
 }

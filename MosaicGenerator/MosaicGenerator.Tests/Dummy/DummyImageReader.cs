@@ -15,7 +15,7 @@ namespace MosaicGenerator.Tests.Dummy
             Color = color.Value;
         }
 
-        public Task<Color[]> ReadImage(string path)
+        public Task<Color[]> ReadImageAsync(string path)
         {
             return Task.FromResult(new Color[] { Color, Color, Color, Color });
         }
