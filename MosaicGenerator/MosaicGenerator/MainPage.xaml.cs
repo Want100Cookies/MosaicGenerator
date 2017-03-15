@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -50,6 +51,8 @@ namespace MosaicGenerator
 
                 Dictionary<Color, List<string>> files = new Dictionary<Color, List<string>>();
 
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
                 var tasks = filePaths.Select(async filePath =>
                 {
                     Color[] colors = await imageReader.ReadImageAsync(filePath);
@@ -80,7 +83,9 @@ namespace MosaicGenerator
                     }
                 }
 
-                await new MessageDialog("Done").ShowAsync();
+                stopwatch.Stop();
+
+                await new MessageDialog("Done in " + stopwatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
             }
 
         }
