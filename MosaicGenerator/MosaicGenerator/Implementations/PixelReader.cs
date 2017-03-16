@@ -18,7 +18,7 @@ namespace MosaicGenerator.Implementations
             void GetBuffer(out byte* buffer, out uint capacity);
         }
 
-        public Task<Color[]> GetPixelData(SoftwareBitmap image)
+        public unsafe Task<Color[]> GetPixelData(SoftwareBitmap image)
         {
             const int BYTES_PER_PIXEL = 4;
 
