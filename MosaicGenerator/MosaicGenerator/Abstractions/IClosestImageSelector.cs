@@ -7,6 +7,12 @@ namespace MosaicGenerator.Abstractions
 {
     public interface IClosestImageSelector
     {
+        /// <summary>
+        /// Select the best matching image for average color
+        /// </summary>
+        /// <param name="color">Average color to fill</param>
+        /// <param name="images">Lookup table of images</param>
+        /// <returns>Image to use</returns>
         Task<SoftwareBitmap> FindClosestImage(Color color, Dictionary<Color, List<SoftwareBitmap>> images);
     }
 }

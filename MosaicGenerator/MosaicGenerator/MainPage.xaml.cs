@@ -61,7 +61,8 @@ namespace MosaicGenerator
 
                     Debug.WriteLine("Done: " + filePath);
 
-                    if (files.TryGetValue(average, out List<string> filesWithColor))
+                    List<string> filesWithColor;
+                    if (files.TryGetValue(average, out filesWithColor))
                     {
                         filesWithColor.Add(filePath);
                     }
