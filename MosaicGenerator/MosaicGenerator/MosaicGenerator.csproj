@@ -109,6 +109,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Implementations\AverageColorCalculator.cs" />
+    <Compile Include="Implementations\ClosestImageSelector.cs" />
     <Compile Include="Implementations\FolderReader.cs" />
     <Compile Include="Implementations\ImageReader.cs" />
     <Compile Include="Implementations\PixelReader.cs" />
