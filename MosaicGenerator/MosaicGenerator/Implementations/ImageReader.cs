@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace MosaicGenerator.Implementations
 {
@@ -47,15 +48,15 @@ namespace MosaicGenerator.Implementations
         }
         */
 
-        public async Task<SoftwareBitmap> ReadImageAsync(IStorageFile path)
+        public async Task<SoftwareBitmap> ReadImageAsync(IStorageFile file)
         {
-            throw new NotImplementedException();
+            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+            {
+                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                SoftwareBitmap bitmap = await decoder.GetSoftwareBitmapAsync();
 
-            //using (Stream imageStream = await Task.Run(() => File.OpenRead(path)))
-            //{
-            //    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(imageStream.AsRandomAccessStream());
-
-            //}
+                return bitmap;
+            }
         }
     }
 }
