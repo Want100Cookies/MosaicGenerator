@@ -1,5 +1,6 @@
 ﻿using MosaicGenerator.Abstractions;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 
@@ -45,8 +46,14 @@ namespace MosaicGenerator.Implementations
         }
         */
 
-        public Task<SoftwareBitmap> ReadImageAsync(string path)
+        public async Task<SoftwareBitmap> ReadImageAsync(string path)
         {
+            using (Stream imageStream = await Task.Run(() => File.OpenRead(path)))
+            {
+                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(imageStream.AsRandomAccessStream());
+
+            }
+
             throw new NotImplementedException();
         }
     }
