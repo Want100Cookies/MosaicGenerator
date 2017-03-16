@@ -20,38 +20,41 @@ namespace MosaicGenerator.Implementations
 
         public unsafe Task<Color[]> GetPixelData(SoftwareBitmap image)
         {
-            const int BYTES_PER_PIXEL = 4;
-
-            using (var buffer = image.LockBuffer(BitmapBufferAccessMode.Read))
+            return Task.Run(() =>
             {
-                using (var reference = buffer.CreateReference())
+                const int BYTES_PER_PIXEL = 4;
+
+                using (var buffer = image.LockBuffer(BitmapBufferAccessMode.Read))
                 {
-                    byte* data;
-                    uint capacity;
-                    ((IMemoryBufferByteAccess)reference).GetBuffer(out data, out capacity);
-
-                    var desc = buffer.GetPlaneDescription(0);
-
-                    Color[] colors = new Color[image.PixelHeight * image.PixelWidth];
-                    int index = 0;
-
-                    for (uint row = 0; row < desc.Height; row++)
+                    using (var reference = buffer.CreateReference())
                     {
-                        for (uint col = 0; col < desc.Width; col++)
+                        byte* data;
+                        uint capacity;
+                        ((IMemoryBufferByteAccess)reference).GetBuffer(out data, out capacity);
+
+                        var desc = buffer.GetPlaneDescription(0);
+
+                        Color[] colors = new Color[image.PixelHeight * image.PixelWidth];
+                        int index = 0;
+
+                        for (uint row = 0; row < desc.Height; row++)
                         {
-                            var currPixel = desc.StartIndex + desc.Stride * row + BYTES_PER_PIXEL * col;
+                            for (uint col = 0; col < desc.Width; col++)
+                            {
+                                var currPixel = desc.StartIndex + desc.Stride * row + BYTES_PER_PIXEL * col;
 
-                            var b = data[currPixel + 0];
-                            var g = data[currPixel + 1];
-                            var r = data[currPixel + 2];
+                                var b = data[currPixel + 0];
+                                var g = data[currPixel + 1];
+                                var r = data[currPixel + 2];
 
-                            colors[index++] = Color.FromArgb(0, r, g, b);
+                                colors[index++] = Color.FromArgb(0, r, g, b);
+                            }
                         }
-                    }
 
-                    return Task.FromResult(colors);
+                        return colors;
+                    }
                 }
-            }
+            });
         }
     }
 }
