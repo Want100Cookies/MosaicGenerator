@@ -52,15 +52,15 @@ namespace MosaicGenerator
                 Dictionary<Color, List<string>> files = new Dictionary<Color, List<string>>();
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
-
+                
                 var tasks = filePaths.Select(async filePath =>
                 {
                     Color[] colors = await imageReader.ReadImageAsync(filePath);
                     Color average = await calculator.CalculateAverage(colors);
 
-                    List<string> filesWithColor;
+                    Debug.WriteLine("Done: " + filePath);
 
-                    if (files.TryGetValue(average, out filesWithColor))
+                    if (files.TryGetValue(average, out List<string> filesWithColor))
                     {
                         filesWithColor.Add(filePath);
                     }
