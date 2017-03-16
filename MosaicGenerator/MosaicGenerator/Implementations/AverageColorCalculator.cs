@@ -36,7 +36,7 @@ namespace MosaicGenerator.Implementations
             throw new NotImplementedException();
         }
 
-        public Task<Color[]> CalculateAverage(SoftwareBitmap image, int width, int blockSize)
+        public Task<Color[]> CalculateAverage(SoftwareBitmap image, int blockSize)
         {
             throw new NotImplementedException();
         }

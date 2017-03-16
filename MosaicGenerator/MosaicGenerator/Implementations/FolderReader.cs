@@ -22,8 +22,10 @@ namespace MosaicGenerator.Implementations
             return await folderPicker.PickSingleFolderAsync();
         }
 
-        public async Task<string[]> ReadFolderAsync(StorageFolder folder)
+        public async Task<IStorageFile[]> ReadFolderAsync(StorageFolder folder)
         {
+            throw new NotImplementedException();
+            
             // Application now has read/write access to all contents in the picked folder
             // (including other sub-folder contents)
             Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
@@ -38,7 +40,7 @@ namespace MosaicGenerator.Implementations
             StorageFileQueryResult query = folder.CreateFileQueryWithOptions(queryOptions);
             IReadOnlyList<StorageFile> fileList = await query.GetFilesAsync();
 
-            return fileList.Select(file => file.Path).ToArray();
+            //return fileList.Select(file => file.Path).ToArray();
         }
     }
 }

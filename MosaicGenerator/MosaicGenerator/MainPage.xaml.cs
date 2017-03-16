@@ -45,7 +45,7 @@ namespace MosaicGenerator
 
             if (folder != null)
             {
-                string[] filePaths = await folderReader.ReadFolderAsync(folder);
+                IStorageFile[] filePaths = await folderReader.ReadFolderAsync(folder);
 
                 ImageReader imageReader = new ImageReader();
                 AverageColorCalculator calculator = new AverageColorCalculator(new PixelReader());
@@ -64,11 +64,11 @@ namespace MosaicGenerator
                     List<string> filesWithColor;
                     if (files.TryGetValue(average, out filesWithColor))
                     {
-                        filesWithColor.Add(filePath);
+                        // filesWithColor.Add(filePath);
                     }
                     else
                     {
-                        files.Add(average, new List<string>() { filePath });
+                        // files.Add(average, new List<string>() { filePath });
                     }
                 });
 

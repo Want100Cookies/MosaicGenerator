@@ -19,7 +19,7 @@ namespace MosaicGenerator.Tests
             IImageReader reader = new DummyImageReader(white);
             IAverageColorCalculator calculator = new AverageColorCalculator(new PixelReader());
 
-            var average = await calculator.CalculateAverage(await reader.ReadImageAsync(""));
+            var average = await calculator.CalculateAverage(await reader.ReadImageAsync(null));
 
             Assert.AreEqual(white, average);
         }
