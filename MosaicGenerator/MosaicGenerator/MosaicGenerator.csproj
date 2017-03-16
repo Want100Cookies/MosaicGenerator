@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IAverageColorCalculator.cs" />
+    <Compile Include="Abstractions\IClosestImageSelector.cs" />
     <Compile Include="Abstractions\IFolderReader.cs" />
     <Compile Include="Abstractions\IImageGenerator.cs" />
     <Compile Include="Abstractions\IImageReader.cs" />
