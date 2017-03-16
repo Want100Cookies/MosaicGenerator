@@ -18,7 +18,33 @@ namespace MosaicGenerator.Tests
             IAverageColorCalculator calculator = new AverageColorCalculator(reader);
 
             var average = await calculator.CalculateAverage(null);
+            
+            Assert.AreEqual(white, average);
+        }
 
+        // Test of de gemiddelde kleur zwart is voor de ingevoerde kleur zwart.
+        [TestMethod]
+        public async Task TestAverageCalculatorBlack()
+        {
+            var black = Color.FromArgb(0, 0, 0, 0);
+            var reader = new DummyPixelReader(black);
+            IAverageColorCalculator calculator = new AverageColorCalculator(reader);
+
+            var average = await calculator.CalculateAverage(null);
+
+            Assert.AreEqual(black, average);
+        }
+
+        // Test of het gemiddelde wit wordt teruggegeven zonder ingevoerde kleur.
+        [TestMethod]
+        public async Task TestAverageCalculatorNoValue()
+        {
+            var reader = new DummyPixelReader();
+            IAverageColorCalculator calculator = new AverageColorCalculator(reader);
+
+            var average = await calculator.CalculateAverage(null);
+
+            var white = Color.FromArgb(0, 255, 255, 255);
             Assert.AreEqual(white, average);
         }
     }
