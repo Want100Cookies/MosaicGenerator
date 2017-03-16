@@ -1,32 +1,23 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MosaicGenerator.Abstractions;
 using Windows.Graphics.Imaging;
 using Windows.UI;
-using Windows.Storage;
 
 namespace MosaicGenerator.Tests.Dummy
 {
-    public class DummyImageReader : IImageReader
+    public class DummyPixelReader : IPixelReader
     {
         public Color Color { get; set; }
 
-        public DummyImageReader(Color? color = null)
+        public DummyPixelReader(Color? color = null)
         {
             color = color ?? Color.FromArgb(0, 255, 255, 255);
             Color = color.Value;
         }
 
-        /*
-        public Task<Color[]> ReadImageAsync(string path)
+        public Task<Color[]> GetPixelData(SoftwareBitmap image)
         {
             return Task.FromResult(new Color[] { Color, Color, Color, Color });
-        }
-        */
-
-        public Task<SoftwareBitmap> ReadImageAsync(IStorageFile file)
-        {
-            throw new NotImplementedException();
         }
     }
 }

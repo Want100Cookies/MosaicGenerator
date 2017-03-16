@@ -1,6 +1,4 @@
-﻿
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MosaicGenerator.Abstractions;
 using MosaicGenerator.Tests.Dummy;
 using System.Threading.Tasks;
@@ -16,10 +14,10 @@ namespace MosaicGenerator.Tests
         public async Task TestAverageCalculator()
         {
             var white = Color.FromArgb(0, 255, 255, 255);
-            IImageReader reader = new DummyImageReader(white);
-            IAverageColorCalculator calculator = new AverageColorCalculator(new PixelReader());
+            var reader = new DummyPixelReader(white);
+            IAverageColorCalculator calculator = new AverageColorCalculator(reader);
 
-            var average = await calculator.CalculateAverage(await reader.ReadImageAsync(null));
+            var average = await calculator.CalculateAverage(null);
 
             Assert.AreEqual(white, average);
         }
