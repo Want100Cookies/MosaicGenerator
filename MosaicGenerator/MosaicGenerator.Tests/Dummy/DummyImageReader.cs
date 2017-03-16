@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MosaicGenerator.Abstractions;
 using Windows.Graphics.Imaging;
 using Windows.UI;
+using Windows.Storage;
 
 namespace MosaicGenerator.Tests.Dummy
 {
@@ -23,7 +24,7 @@ namespace MosaicGenerator.Tests.Dummy
         }
         */
 
-        Task<SoftwareBitmap> IImageReader.ReadImageAsync(string path)
+        public Task<SoftwareBitmap> ReadImageAsync(IStorageFile file)
         {
             throw new NotImplementedException();
         }
