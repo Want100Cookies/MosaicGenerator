@@ -17,7 +17,7 @@ namespace MosaicGenerator.Tests
         {
             var white = Color.FromArgb(0, 255, 255, 255);
             IImageReader reader = new DummyImageReader(white);
-            IAverageColorCalculator calculator = new AverageColorCalculator();
+            IAverageColorCalculator calculator = new AverageColorCalculator(new PixelReader());
 
             var average = await calculator.CalculateAverage(await reader.ReadImageAsync(""));
 

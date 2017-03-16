@@ -4,8 +4,8 @@ using Windows.UI;
 
 namespace MosaicGenerator.Abstractions
 {
-    public interface IImageReader
+    public interface IPixelReader
     {
-        Task<SoftwareBitmap> ReadImageAsync(string path);
+        Task<Color[]> GetPixelData(SoftwareBitmap image);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MosaicGenerator.Abstractions;
+using Windows.Graphics.Imaging;
 using Windows.UI;
 
 namespace MosaicGenerator.Tests.Dummy
@@ -15,9 +16,16 @@ namespace MosaicGenerator.Tests.Dummy
             Color = color.Value;
         }
 
+        /*
         public Task<Color[]> ReadImageAsync(string path)
         {
             return Task.FromResult(new Color[] { Color, Color, Color, Color });
+        }
+        */
+
+        Task<SoftwareBitmap> IImageReader.ReadImageAsync(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -42,12 +42,13 @@ namespace MosaicGenerator
             FolderReader folderReader = new FolderReader();
             StorageFolder folder = await folderReader.PickFolderAsync();
 
+
             if (folder != null)
             {
                 string[] filePaths = await folderReader.ReadFolderAsync(folder);
 
                 ImageReader imageReader = new ImageReader();
-                AverageColorCalculator calculator = new AverageColorCalculator();
+                AverageColorCalculator calculator = new AverageColorCalculator(new PixelReader());
 
                 Dictionary<Color, List<string>> files = new Dictionary<Color, List<string>>();
 
@@ -55,8 +56,8 @@ namespace MosaicGenerator
                 
                 var tasks = filePaths.Select(async filePath =>
                 {
-                    Color[] colors = await imageReader.ReadImageAsync(filePath);
-                    Color average = await calculator.CalculateAverage(colors);
+                    SoftwareBitmap image = await imageReader.ReadImageAsync(filePath);
+                    Color average = await calculator.CalculateAverage(image);
 
                     Debug.WriteLine("Done: " + filePath);
 

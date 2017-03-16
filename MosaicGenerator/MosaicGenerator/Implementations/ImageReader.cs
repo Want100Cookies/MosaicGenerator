@@ -1,17 +1,13 @@
 ﻿using MosaicGenerator.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
-using Windows.UI;
 
 namespace MosaicGenerator.Implementations
 {
-    class ImageReader : IImageReader
+    public class ImageReader : IImageReader
     {
+        /*
         public async Task<Color[]> ReadImageAsync(string path)
         {
             using (Stream imageStream = await Task.Run(() => File.OpenRead(path)))
@@ -46,6 +42,12 @@ namespace MosaicGenerator.Implementations
 
                 return imageColors;
             }
+        }
+        */
+
+        public Task<SoftwareBitmap> ReadImageAsync(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }
