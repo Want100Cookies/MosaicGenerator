@@ -104,6 +104,7 @@
     <Compile Include="Abstractions\IFolderReader.cs" />
     <Compile Include="Abstractions\IImageGenerator.cs" />
     <Compile Include="Abstractions\IImageReader.cs" />
+    <Compile Include="Abstractions\IImageSaver.cs" />
     <Compile Include="Abstractions\IPixelReader.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -111,6 +112,7 @@
     <Compile Include="Implementations\AverageColorCalculator.cs" />
     <Compile Include="Implementations\ClosestImageSelector.cs" />
     <Compile Include="Implementations\FolderReader.cs" />
+    <Compile Include="Implementations\ImageGenerator.cs" />
     <Compile Include="Implementations\ImageReader.cs" />
     <Compile Include="Implementations\PixelReader.cs" />
     <Compile Include="MainPage.xaml.cs">
