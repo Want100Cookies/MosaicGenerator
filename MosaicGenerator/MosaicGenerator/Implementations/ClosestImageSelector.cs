@@ -9,13 +9,12 @@ using Windows.UI;
 
 namespace MosaicGenerator.Implementations
 {
-    class ClosestImageSelector : IClosestImageSelector
+    public class ClosestImageSelector : IClosestImageSelector
     {
         private static Random random = new Random();
 
         public Task<SoftwareBitmap> FindClosestImage(Color color, Dictionary<Color, List<SoftwareBitmap>> images)
         {
-            // Todo: Make unit test
             return Task.Run(() =>
             {
                 List<SoftwareBitmap> imageList;

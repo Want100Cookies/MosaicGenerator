@@ -4,6 +4,8 @@ using MosaicGenerator.Tests.Dummy;
 using System.Threading.Tasks;
 using Windows.UI;
 using MosaicGenerator.Implementations;
+using Windows.Graphics.Imaging;
+using System.Collections.Generic;
 
 namespace MosaicGenerator.Tests
 {
@@ -46,6 +48,64 @@ namespace MosaicGenerator.Tests
 
             var white = Color.FromArgb(0, 255, 255, 255);
             Assert.AreEqual(white, average);
+        }
+
+        [TestMethod]
+        public async Task TestClosestImageSelectorExact()
+        {
+            IClosestImageSelector imageSelector = new ClosestImageSelector();
+
+            var originalColor = Color.FromArgb(0, 255, 255, 255);
+
+            var colorDict = new Dictionary<Color, List<SoftwareBitmap>>();
+
+            var closestBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 5, 5);
+            var closestColor = originalColor;
+
+            colorDict.Add(closestColor, new List<SoftwareBitmap> { closestBitmap });
+
+            var farBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 10, 10); // Different size so not equel
+            var farColor = Color.FromArgb(0, 0, 0, 0);
+
+            colorDict.Add(farColor, new List<SoftwareBitmap> { farBitmap });
+
+            var farBitmap2 = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 20, 20); // Different size so not equel
+            var farColor2 = Color.FromArgb(0, 255, 255, 0);
+
+            colorDict.Add(farColor2, new List<SoftwareBitmap> { farBitmap2 });
+
+            var bitmap = await imageSelector.FindClosestImage(originalColor, colorDict);
+
+            Assert.AreEqual(closestBitmap, bitmap);
+        }
+
+        [TestMethod]
+        public async Task TestClosestImageSelectorNear()
+        {
+            IClosestImageSelector imageSelector = new ClosestImageSelector();
+
+            var originalColor = Color.FromArgb(0, 255, 255, 255);
+
+            var colorDict = new Dictionary<Color, List<SoftwareBitmap>>();
+
+            var closestBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 5, 5);
+            var closestColor = Color.FromArgb(0, 200, 200, 200);
+
+            colorDict.Add(closestColor, new List<SoftwareBitmap> { closestBitmap });
+
+            var farBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 10, 10); // Different size so not equel
+            var farColor = Color.FromArgb(0, 0, 0, 0);
+
+            colorDict.Add(farColor, new List<SoftwareBitmap> { farBitmap });
+
+            var farBitmap2 = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 20, 20); // Different size so not equel
+            var farColor2 = Color.FromArgb(0, 255, 255, 0);
+
+            colorDict.Add(farColor2, new List<SoftwareBitmap> { farBitmap2 });
+
+            var bitmap = await imageSelector.FindClosestImage(originalColor, colorDict);
+
+            Assert.AreEqual(closestBitmap, bitmap);
         }
     }
 }
