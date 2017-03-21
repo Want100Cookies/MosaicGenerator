@@ -89,6 +89,7 @@ namespace MosaicGenerator
                             Orientation = Orientation.Horizontal,
                             HorizontalAlignment = HorizontalAlignment.Center,
                             VerticalAlignment = VerticalAlignment.Center,
+                            Background = new SolidColorBrush(imageWithColor.Key)
                         };
 
                         panel.Children.Add(new TextBlock()

@@ -28,7 +28,7 @@ namespace MosaicGenerator.Implementations
                 b += pixelData[i].B;
             }
 
-            return Color.FromArgb(0, (byte)(r / (float)pixelData.Length), (byte)(g / (float)pixelData.Length), (byte)(b / (float)pixelData.Length));
+            return Color.FromArgb(255, (byte)(r / (float)pixelData.Length), (byte)(g / (float)pixelData.Length), (byte)(b / (float)pixelData.Length));
         }
 
         public Task<Color[]> CalculateAverage(SoftwareBitmap image, int blockSize)

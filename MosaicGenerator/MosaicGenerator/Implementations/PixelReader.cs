@@ -47,7 +47,7 @@ namespace MosaicGenerator.Implementations
                                 var g = data[currPixel + 1];
                                 var r = data[currPixel + 2];
 
-                                colors[index++] = Color.FromArgb(0, r, g, b);
+                                colors[index++] = Color.FromArgb(255, r, g, b);
                             }
                         }
 
