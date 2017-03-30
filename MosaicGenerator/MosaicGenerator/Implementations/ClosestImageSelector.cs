@@ -13,11 +13,11 @@ namespace MosaicGenerator.Implementations
     {
         private static Random random = new Random();
 
-        public Task<SoftwareBitmap> FindClosestImage(Color color, Dictionary<Color, List<SoftwareBitmap>> images)
+        public SoftwareBitmap FindClosestImage(Color color, Dictionary<Color, List<SoftwareBitmap>> images)
         {
             // Todo: Make unit test
-            return Task.Run(() =>
-            {
+            //return Task.Run(() =>
+            //{
                 List<SoftwareBitmap> imageList;
                 if (!images.TryGetValue(color, out imageList))
                 {
@@ -31,7 +31,7 @@ namespace MosaicGenerator.Implementations
 
                 int index = random.Next(imageList.Count);
                 return imageList[index];
-            });
+            //});
         }
 
         private int ColorDiff(Color c1, Color c2)

@@ -15,9 +15,9 @@ namespace MosaicGenerator.Implementations
             this.pixelReader = pixelReader;
         }
 
-        public async Task<Color> CalculateAverage(SoftwareBitmap image)
+        public Color CalculateAverage(SoftwareBitmap image)
         {
-            Color[] pixelData = await pixelReader.GetPixelData(image);
+            Color[] pixelData = pixelReader.GetPixelData(image);
 
             int r = 0, g = 0, b = 0;
 
@@ -31,7 +31,7 @@ namespace MosaicGenerator.Implementations
             return Color.FromArgb(0, (byte)(r / (float)pixelData.Length), (byte)(g / (float)pixelData.Length), (byte)(b / (float)pixelData.Length));
         }
 
-        public Task<Color[]> CalculateAverage(SoftwareBitmap image, int blockSize)
+        public Color[] CalculateAverage(SoftwareBitmap image, int blockSize)
         {
             throw new NotImplementedException();
         }

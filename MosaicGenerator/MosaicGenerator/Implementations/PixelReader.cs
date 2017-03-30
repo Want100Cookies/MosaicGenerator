@@ -18,10 +18,10 @@ namespace MosaicGenerator.Implementations
             void GetBuffer(out byte* buffer, out uint capacity);
         }
 
-        public unsafe Task<Color[]> GetPixelData(SoftwareBitmap image)
+        public unsafe Color[] GetPixelData(SoftwareBitmap image)
         {
-            return Task.Run(() =>
-            {
+            //return Task.Run(() =>
+            //{
                 const int BYTES_PER_PIXEL = 4;
 
                 using (var buffer = image.LockBuffer(BitmapBufferAccessMode.Read))
@@ -54,7 +54,7 @@ namespace MosaicGenerator.Implementations
                         return colors;
                     }
                 }
-            });
+            //});
         }
     }
 }

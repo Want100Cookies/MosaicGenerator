@@ -50,7 +50,7 @@ namespace MosaicGenerator.Implementations
 
         public async Task<SoftwareBitmap> ReadImageAsync(IStorageFile file)
         {
-            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+            using (var stream = await file.OpenAsync(FileAccessMode.Read))
             {
                 BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
                 SoftwareBitmap bitmap = await decoder.GetSoftwareBitmapAsync();

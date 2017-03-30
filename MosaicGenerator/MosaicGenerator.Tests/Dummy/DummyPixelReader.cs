@@ -15,9 +15,9 @@ namespace MosaicGenerator.Tests.Dummy
             Color = color.Value;
         }
 
-        public Task<Color[]> GetPixelData(SoftwareBitmap image)
+        public Color[] GetPixelData(SoftwareBitmap image)
         {
-            return Task.FromResult(new Color[] { Color, Color, Color, Color });
+            return new Color[] { Color, Color, Color, Color };
         }
     }
 }
