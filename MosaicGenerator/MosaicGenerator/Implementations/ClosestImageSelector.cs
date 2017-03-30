@@ -9,7 +9,7 @@ using Windows.UI;
 
 namespace MosaicGenerator.Implementations
 {
-    class ClosestImageSelector : IClosestImageSelector
+    public class ClosestImageSelector : IClosestImageSelector
     {
         private static Random random = new Random();
 

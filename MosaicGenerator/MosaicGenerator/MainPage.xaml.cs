@@ -1,4 +1,5 @@
-﻿using MosaicGenerator.Implementations;
+﻿using MosaicGenerator.Abstractions;
+using MosaicGenerator.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,12 @@ using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,7 +35,7 @@ namespace MosaicGenerator
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            FolderReader folderReader = new FolderReader();
+            IFolderReader folderReader = new FolderReader();
             StorageFolder folder = await folderReader.PickFolderAsync();
 
 
@@ -36,10 +43,11 @@ namespace MosaicGenerator
             {
                 IStorageFile[] filePaths = await folderReader.ReadFolderAsync(folder);
 
-                ImageReader imageReader = new ImageReader();
-                AverageColorCalculator calculator = new AverageColorCalculator(new PixelReader());
+                IImageReader imageReader = new ImageReader();
+                IPixelReader pixelReader = new PixelReader();
+                IAverageColorCalculator calculator = new AverageColorCalculator(pixelReader);
 
-                Dictionary<Color, List<string>> files = new Dictionary<Color, List<string>>();
+                Dictionary<Color, List<SoftwareBitmap>> images = new Dictionary<Color, List<SoftwareBitmap>>();
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -70,20 +78,43 @@ namespace MosaicGenerator
                 await Task.WhenAll(tasks);
                 GC.Collect();
 
-                //foreach (KeyValuePair<Color, List<string>> fileWithColor in files)
-                //{
-                //    foreach (string path in fileWithColor.Value)
-                //    {
-                //        ImageList.Items.Add(new TextBlock()
-                //        {
-                //            Text = $"{fileWithColor.Key.ToString()} in {path}"
-                //        });
-                //    }
-                //}
-
                 stopwatch.Stop();
 
                 await new MessageDialog("Done in " + stopwatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
+
+
+                foreach (KeyValuePair<Color, List<SoftwareBitmap>> imageWithColor in images)
+                {
+                    foreach (SoftwareBitmap image in imageWithColor.Value)
+                    {
+                        var panel = new StackPanel()
+                        {
+                            Orientation = Orientation.Horizontal,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Background = new SolidColorBrush(imageWithColor.Key)
+                        };
+
+                        panel.Children.Add(new TextBlock()
+                        {
+                            Text = imageWithColor.Key.ToString()
+                        });
+
+                        var source = new SoftwareBitmapSource();
+                        await source.SetBitmapAsync(SoftwareBitmap.Convert(image, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied));
+
+                        panel.Children.Add(new Image()
+                        {
+                            Source = source,
+                            Width = 100,
+                            Height = 100,
+                            Margin = new Thickness(10, 0, 10, 0)
+                        });
+
+                        ImageList.Items.Add(panel);
+                    }
+                }
+
             }
 
         }
