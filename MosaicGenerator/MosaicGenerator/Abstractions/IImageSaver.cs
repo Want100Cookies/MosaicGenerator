@@ -5,6 +5,6 @@ namespace MosaicGenerator.Abstractions
 {
     public interface IImageSaver
     {
-        Task SaveImageAsync(SoftwareBitmap image);
+        Task SaveImageAsync(IImage image);
     }
 }

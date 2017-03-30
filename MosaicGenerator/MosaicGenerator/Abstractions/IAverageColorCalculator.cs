@@ -11,7 +11,7 @@ namespace MosaicGenerator.Abstractions
         /// </summary>
         /// <param name="image">Image to calculate the average color of</param>
         /// <returns>The average color of the entire image</returns>
-        Task<Color> CalculateAverage(SoftwareBitmap image);
+        Color CalculateAverage(byte[] colors);
 
         /// <summary>
         /// Calculate the average color of each section of the image
@@ -20,6 +20,6 @@ namespace MosaicGenerator.Abstractions
         /// <param name="image">Image to calculate the average block colors of</param>
         /// <param name="blockSize">Size in pixels of each block</param>
         /// <returns>An array of the average colors of the blocks</returns>
-        Task<Color[]> CalculateAverage(SoftwareBitmap image, int blockSize);
+        Color[] CalculateAverage(IImage image, int blockSize);
     }
 }

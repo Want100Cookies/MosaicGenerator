@@ -14,6 +14,6 @@ namespace MosaicGenerator.Abstractions
         /// <param name="lookup">Lookup table of images and average colors to be used in the mosaic</param>
         /// <param name="blockSize">Size in pixels of each block</param>
         /// <returns>Mosaic image</returns>
-        Task<SoftwareBitmap> GenerateImage(SoftwareBitmap image, Dictionary<Color, List<SoftwareBitmap>> lookup, int blockSize);
+        Task<IImage> GenerateImage(IImage image, Dictionary<Color, List<IImage>> lookup, int blockSize);
     }
 }

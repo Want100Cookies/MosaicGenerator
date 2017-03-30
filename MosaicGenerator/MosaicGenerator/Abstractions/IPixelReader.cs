@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using Windows.UI;
 
 namespace MosaicGenerator.Abstractions
@@ -11,6 +12,6 @@ namespace MosaicGenerator.Abstractions
         /// </summary>
         /// <param name="image">SoftwareBitmap to read from</param>
         /// <returns>Array of color data</returns>
-        Task<Color[]> GetPixelData(SoftwareBitmap image);
+        Task<byte[]> GetPixelData(BitmapDecoder decoder);
     }
 }

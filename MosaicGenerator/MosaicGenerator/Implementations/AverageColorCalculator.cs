@@ -8,30 +8,24 @@ namespace MosaicGenerator.Implementations
 {
     public class AverageColorCalculator : IAverageColorCalculator
     {
-        private readonly IPixelReader pixelReader;
-
-        public AverageColorCalculator(IPixelReader pixelReader)
+        public Color CalculateAverage(byte[] colors)
         {
-            this.pixelReader = pixelReader;
-        }
-
-        public async Task<Color> CalculateAverage(SoftwareBitmap image)
-        {
-            Color[] pixelData = await pixelReader.GetPixelData(image);
-
+            //read the color 
             int r = 0, g = 0, b = 0;
 
-            for (int i = 0; i < pixelData.Length; i++)
+            for (int i = 0; i < colors.Length; i += 4)
             {
-                r += pixelData[i].R;
-                g += pixelData[i].G;
-                b += pixelData[i].B;
+                r += colors[i];
+                g += colors[i + 1];
+                b += colors[i + 2];
             }
 
-            return Color.FromArgb(255, (byte)(r / (float)pixelData.Length), (byte)(g / (float)pixelData.Length), (byte)(b / (float)pixelData.Length));
+            float arrayLength = colors.Length / 4;
+
+            return Color.FromArgb(255, (byte)(r / arrayLength), (byte)(g / arrayLength), (byte)(b / arrayLength));
         }
 
-        public Task<Color[]> CalculateAverage(SoftwareBitmap image, int blockSize)
+        public Color[] CalculateAverage(IImage image, int blockSize)
         {
             throw new NotImplementedException();
         }

@@ -13,6 +13,6 @@ namespace MosaicGenerator.Abstractions
         /// <param name="color">Average color to fill</param>
         /// <param name="images">Lookup table of images</param>
         /// <returns>Image to use</returns>
-        Task<SoftwareBitmap> FindClosestImage(Color color, Dictionary<Color, List<SoftwareBitmap>> images);
+        Task<IImage> FindClosestImage(Color color, Dictionary<Color, List<IImage>> images);
     }
 }
