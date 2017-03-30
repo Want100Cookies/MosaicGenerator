@@ -74,7 +74,7 @@ namespace MosaicGenerator.Tests
 
             colorDict.Add(farColor2, new List<SoftwareBitmap> { farBitmap2 });
 
-            var bitmap = await imageSelector.FindClosestImage(originalColor, colorDict);
+            var bitmap = imageSelector.FindClosestImage(originalColor, colorDict);
 
             Assert.AreEqual(closestBitmap, bitmap);
         }
@@ -103,7 +103,7 @@ namespace MosaicGenerator.Tests
 
             colorDict.Add(farColor2, new List<SoftwareBitmap> { farBitmap2 });
 
-            var bitmap = await imageSelector.FindClosestImage(originalColor, colorDict);
+            var bitmap = imageSelector.FindClosestImage(originalColor, colorDict);
 
             Assert.AreEqual(closestBitmap, bitmap);
         }
