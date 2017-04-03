@@ -1,6 +1,7 @@
 ﻿using MosaicGenerator.Abstractions;
 using MosaicGenerator.Implementations;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,6 +17,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Search;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,6 +27,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -44,115 +47,113 @@ namespace MosaicGenerator
         {
             IFolderReader folderReader = new FolderReader();
             StorageFolder folder = await folderReader.PickFolderAsync();
-            IAverageColorCalculator calculator = new AverageColorCalculator();
-            IPixelReader pixelReader = new PixelReader();
 
             if (folder != null)
             {
                 IStorageFile[] filePaths = await folderReader.ReadFolderAsync(folder);
 
-                Stopwatch stopwatch = Stopwatch.StartNew();
+                progressBar.Maximum = filePaths.Length;
 
-                await Task.Run(() =>
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                IDictionary<Color, List<string>> averageColors;
+
+                await Task.Run(async () =>
                 {
-                    calculate(filePaths);    
+                    averageColors = await calculate(filePaths);
                 });
 
                 GC.Collect();
                 stopwatch.Stop();
 
                 await new MessageDialog("Done in " + stopwatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
-
-
-                //foreach (KeyValuePair<Color, List<IImage>> imageWithColor in images)
-                //{
-                //    foreach (IImage image in imageWithColor.Value)
-                //    {
-                //        var panel = new StackPanel()
-                //        {
-                //            Orientation = Orientation.Horizontal,
-                //            HorizontalAlignment = HorizontalAlignment.Center,
-                //            VerticalAlignment = VerticalAlignment.Center,
-                //            Background = new SolidColorBrush(imageWithColor.Key)
-                //        };
-
-                //        panel.Children.Add(new TextBlock()
-                //        {
-                //            Text = imageWithColor.Key.ToString()
-                //        });
-
-                //        //BitmapImage bitmap = new BitmapImage();
-                //        //MemoryStream stream = new MemoryStream(image.GetPixels());
-                //        //IRandomAccessStream randomStream = stream.AsRandomAccessStream();
-                //        //bitmap.SetSource(randomStream);
-
-                //        //panel.Children.Add(new Windows.UI.Xaml.Controls.Image()
-                //        //{
-                //        //    Source = bitmap as ImageSource,
-                //        //    Width = 100,
-                //        //    Height = 100,
-                //        //    Margin = new Thickness(10, 0, 10, 0)
-                //        //});
-
-                //        ImageList.Items.Add(panel);
-                //    }
-                //}
-
             }
 
         }
 
-        private async Task calculate(IStorageFile[] filePaths)
+        private async Task<IDictionary<Color, List<string>>> calculate(IStorageFile[] files)
         {
-            Dictionary<Color, List<string>> images = new Dictionary<Color, List<string>>();
+            ConcurrentDictionary<Color, List<string>> images = new ConcurrentDictionary<Color, List<string>>();
+
+            IAverageColorCalculator calculator = new AverageColorCalculator();
 
 
-            var tasks = filePaths.Select(async filePath =>
+            var tasks = files.Select(async file =>
             {
-                using (IRandomAccessStream stream = await filePath.OpenAsync(FileAccessMode.Read))
-                {
-                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                IImage image = new Implementations.Image(file);
+                Color average = calculator.CalculateAverage(await image.GetPixels());
 
-                    PixelDataProvider pixels = await decoder.GetPixelDataAsync(
-                        BitmapPixelFormat.Rgba8,
-                        BitmapAlphaMode.Straight,
-                        new BitmapTransform(),
-                        ExifOrientationMode.RespectExifOrientation,
-                        ColorManagementMode.ColorManageToSRgb);
+                Debug.WriteLine("Found " + average.ToString() + " in " + image.GetFileName());
 
-                    byte[] colors = pixels.DetachPixelData();
-
-                    int r = 0, g = 0, b = 0;
-
-                    for (int i = 0; i < colors.Length; i += 4)
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        r += colors[i];
-                        g += colors[i + 1];
-                        b += colors[i + 2];
-                    }
+                        progressBar.Value++;
+                    });
 
-                    float arrayLength = colors.Length / 4;
-
-                    Color average = Color.FromArgb(255, (byte)(r / arrayLength), (byte)(g / arrayLength), (byte)(b / arrayLength));
-
-                    Debug.WriteLine(average.ToString() + " > " + filePath.Name);
+                List<string> imageWithColor;
+                if (images.TryGetValue(average, out imageWithColor))
+                {
+                    imageWithColor.Add(file.Path);
+                }
+                else
+                {
+                    images.TryAdd(average, new List<string>() { file.Path });
                 }
 
-
-
-                //List<IImage> imageWithColor;
-                //if (images.TryGetValue(average, out imageWithColor))
-                //{
-                //    imageWithColor.Add(image);
-                //}
-                //else
-                //{
-                //    images.Add(average, new List<IImage>() { image });
-                //}
             });
 
             await Task.WhenAll(tasks);
 
+            return images;
+        }
+
+        private async void BtnSelectSourceClick(object sender, RoutedEventArgs e)
+        {
+            IAverageColorCalculator calculator = new AverageColorCalculator();
+
+            var picker = new FileOpenPicker()
+            {
+                ViewMode = PickerViewMode.Thumbnail,
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary
+            };
+
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                IImage image = new Implementations.Image(file);
+
+                int max = 5;
+                int size = 100;
+
+                Color[] colors = await calculator.CalculateAverage(image, size);
+
+
+                int i = 0;
+
+                foreach (Color color in colors)
+                {
+                    Rectangle rectangle = new Rectangle()
+                    {
+                        Fill = new SolidColorBrush(color),
+                        Width = 100,
+                        Height = 100
+                    };
+                    
+                    outputGrid.Children.Add(rectangle);
+
+                    int y = i % max;
+                    int x = i / max;
+
+                    Grid.SetColumn(rectangle, x);
+                    Grid.SetRow(rectangle, y);
+
+                    Debug.WriteLine($"Set {color.ToString()} at {x}x{y}");
+                    i++;                    
+                }
+            }
         }
     }
 }

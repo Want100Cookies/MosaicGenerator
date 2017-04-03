@@ -14,8 +14,6 @@ namespace MosaicGenerator.Implementations
     {
         private IPixelReader pixelReader;
         private IStorageFile file;
-        private int width;
-        private int height;
 
         public Image(IStorageFile file)
         {
