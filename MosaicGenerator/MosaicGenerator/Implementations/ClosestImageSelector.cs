@@ -13,7 +13,7 @@ namespace MosaicGenerator.Implementations
     {
         private static Random random = new Random();
 
-        public Task<IImage> FindClosestImage(Color color, Dictionary<Color, List<IImage>> images)
+        public Task<IImage> FindClosestImage(Color color, IDictionary<Color, List<IImage>> images)
         {
             return Task.Run(() =>
             {
@@ -30,7 +30,7 @@ namespace MosaicGenerator.Implementations
 
                 int index = random.Next(imageList.Count);
                 return imageList[index];
-            //});
+            });
         }
 
         private int ColorDiff(Color c1, Color c2)

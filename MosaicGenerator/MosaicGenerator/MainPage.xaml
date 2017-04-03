@@ -7,26 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button Content="Select source folder" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+    <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button x:Name="SelectSrcBtn" Content="Select source folder" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         <ProgressBar x:Name="progressBar" Height="32" VerticalAlignment="Top" Margin="166,10,10,0"/>
-        <Button Content="Select destination image" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Click="BtnSelectSourceClick"/>
-        <Grid x:Name="outputGrid" HorizontalAlignment="Right" Height="500" Margin="0,84,770,0" VerticalAlignment="Top" Width="500">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-        </Grid>
+        <Button x:Name="SelectDestBtn" Content="Select destination image" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Click="BtnSelectSourceClick" IsEnabled="False"/>
+        <Image x:Name="imageView" Margin="10,84,10,10"/>
 
     </Grid>
 </Page>

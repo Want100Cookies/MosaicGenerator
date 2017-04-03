@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
-using Windows.UI;
 
 namespace MosaicGenerator.Abstractions
 {

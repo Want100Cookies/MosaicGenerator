@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
@@ -33,6 +34,8 @@ namespace MosaicGenerator
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private IDictionary<Color, List<IImage>> averageColors;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -45,12 +48,13 @@ namespace MosaicGenerator
 
             if (folder != null)
             {
+                SelectSrcBtn.IsEnabled = false;
+
                 IStorageFile[] filePaths = await folderReader.ReadFolderAsync(folder);
 
                 progressBar.Maximum = filePaths.Length;
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                IDictionary<Color, List<string>> averageColors;
 
                 await Task.Run(async () =>
                 {
@@ -61,13 +65,15 @@ namespace MosaicGenerator
                 stopwatch.Stop();
 
                 await new MessageDialog("Done in " + stopwatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
+
+                SelectDestBtn.IsEnabled = true;
             }
 
         }
 
-        private async Task<IDictionary<Color, List<string>>> calculate(IStorageFile[] files)
+        private async Task<IDictionary<Color, List<IImage>>> calculate(IStorageFile[] files)
         {
-            ConcurrentDictionary<Color, List<string>> images = new ConcurrentDictionary<Color, List<string>>();
+            ConcurrentDictionary<Color, List<IImage>> images = new ConcurrentDictionary<Color, List<IImage>>();
 
             IAverageColorCalculator calculator = new AverageColorCalculator();
 
@@ -77,21 +83,19 @@ namespace MosaicGenerator
                 IImage image = new Implementations.Image(file);
                 Color average = calculator.CalculateAverage(await image.GetPixels());
 
-                Debug.WriteLine("Found " + average.ToString() + " in " + image.GetFileName());
-
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
                         progressBar.Value++;
                     });
 
-                List<string> imageWithColor;
+                List<IImage> imageWithColor;
                 if (images.TryGetValue(average, out imageWithColor))
                 {
-                    imageWithColor.Add(file.Path);
+                    imageWithColor.Add(image);
                 }
                 else
                 {
-                    images.TryAdd(average, new List<string>() { file.Path });
+                    images.TryAdd(average, new List<IImage>() { image });
                 }
 
             });
@@ -103,8 +107,6 @@ namespace MosaicGenerator
 
         private async void BtnSelectSourceClick(object sender, RoutedEventArgs e)
         {
-            IAverageColorCalculator calculator = new AverageColorCalculator();
-
             var picker = new FileOpenPicker()
             {
                 ViewMode = PickerViewMode.Thumbnail,
@@ -120,34 +122,23 @@ namespace MosaicGenerator
             {
                 IImage image = new Implementations.Image(file);
 
-                int max = 5;
-                int size = 100;
+                int blockSize = 50;
 
-                Color[] colors = await calculator.CalculateAverage(image, size);
+                Stopwatch stopWatch = new Stopwatch();
 
+                stopWatch.Start();
 
-                int i = 0;
+                IImageGenerator generator = new ImageGenerator(
+                    new ClosestImageSelector(),
+                    new AverageColorCalculator());
 
-                foreach (Color color in colors)
-                {
-                    Rectangle rectangle = new Rectangle()
-                    {
-                        Fill = new SolidColorBrush(color),
-                        Width = 100,
-                        Height = 100
-                    };
-                    
-                    outputGrid.Children.Add(rectangle);
+                WriteableBitmap newImage = await generator.GenerateImage(image, averageColors, blockSize);
 
-                    int y = i % max;
-                    int x = i / max;
+                stopWatch.Stop();
 
-                    Grid.SetColumn(rectangle, x);
-                    Grid.SetRow(rectangle, y);
+                await new MessageDialog("Done in " + stopWatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
 
-                    Debug.WriteLine($"Set {color.ToString()} at {x}x{y}");
-                    i++;                    
-                }
+                imageView.Source = newImage;
             }
         }
     }

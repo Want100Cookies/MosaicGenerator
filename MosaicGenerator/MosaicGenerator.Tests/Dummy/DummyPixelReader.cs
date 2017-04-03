@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MosaicGenerator.Abstractions;
 using Windows.Graphics.Imaging;
 using Windows.UI;
@@ -18,6 +19,11 @@ namespace MosaicGenerator.Tests.Dummy
         public Color[] GetPixelData(SoftwareBitmap image)
         {
             return new Color[] { Color, Color, Color, Color };
+        }
+
+        public Task<byte[]> GetPixelData(BitmapDecoder decoder)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -37,7 +37,7 @@ namespace MosaicGenerator.Implementations
 
             for (int i = 0; i < width; i += blockSize)
             {
-                for (int j = 0; j < height; j += blockSize)
+                for (int j = height - blockSize; j > -blockSize; j -= blockSize)
                 {
                     int total = 0;
                     float R = 0;
@@ -53,16 +53,15 @@ namespace MosaicGenerator.Implementations
 
                             int pixelLocation = (x + y) * 4;
 
-                            if (x < width)
-                            {
-                                total++;
+                            total++;
 
-                                R += pixels[pixelLocation];
-                                G += pixels[pixelLocation + 1];
-                                B += pixels[pixelLocation + 2];
-                            }
+                            R += pixels[pixelLocation];
+                            G += pixels[pixelLocation + 1];
+                            B += pixels[pixelLocation + 2];
                         }
                     }
+
+                    total = total / 2;
 
                     Color color = Color.FromArgb(
                         255,
@@ -70,8 +69,6 @@ namespace MosaicGenerator.Implementations
                         (byte)(G / total),
                         (byte)(B / total)
                         );
-
-                    Debug.WriteLine($"Found {color.ToString()} at {i}x{j} to {i + blockSize}x{j + blockSize}");
 
                     colors.Add(color);
                 }
