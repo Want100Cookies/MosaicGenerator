@@ -18,18 +18,20 @@ namespace MosaicGenerator.Implementations
             this.averageColorCalculator = averageColorCalculator;
         }
 
-        public SoftwareBitmap GenerateImage(SoftwareBitmap image, Dictionary<Color, List<SoftwareBitmap>> lookup, int blockSize)
+        public async Task<IImage> GenerateImage(IImage image, Dictionary<Color, List<IImage>> lookup, int blockSize)
         {
-            var output = new SoftwareBitmap(BitmapPixelFormat.Rgba8, image.PixelWidth, image.PixelHeight);
+            //var output = new SoftwareBitmap(BitmapPixelFormat.Rgba8, image.PixelWidth, image.PixelHeight);
 
-            var blocks = averageColorCalculator.CalculateAverage(image, blockSize);
+            ////var blocks = await averageColorCalculator.CalculateAverage(image, blockSize);
 
-            for(int i = 0; i < blocks.Length; i++)
-            {
-                var closest = closestImageSelector.FindClosestImage(blocks[i], lookup);
-            }
+            //for(int i = 0; i < blocks.Length; i++)
+            //{
+            //    var closest = await closestImageSelector.FindClosestImage(blocks[i], lookup);
+            //}
 
-            return output;
+            //return output;
+
+            return null;
         }
     }
 }

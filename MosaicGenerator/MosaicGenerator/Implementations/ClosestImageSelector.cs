@@ -13,12 +13,11 @@ namespace MosaicGenerator.Implementations
     {
         private static Random random = new Random();
 
-        public SoftwareBitmap FindClosestImage(Color color, Dictionary<Color, List<SoftwareBitmap>> images)
+        public Task<IImage> FindClosestImage(Color color, Dictionary<Color, List<IImage>> images)
         {
-            // Todo: Make unit test
-            //return Task.Run(() =>
-            //{
-                List<SoftwareBitmap> imageList;
+            return Task.Run(() =>
+            {
+                List<IImage> imageList;
                 if (!images.TryGetValue(color, out imageList))
                 {
                     List<Color> allColors = images.Keys.ToList();
