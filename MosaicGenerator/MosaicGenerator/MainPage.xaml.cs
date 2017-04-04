@@ -122,15 +122,23 @@ namespace MosaicGenerator
             {
                 IImage image = new Implementations.Image(file);
 
-                int blockSize = 50;
+                int blockSize = 10;
 
                 Stopwatch stopWatch = new Stopwatch();
+
+                progressBar.Maximum = (await image.GetWidth() * await image.GetHeigth()) / (blockSize * blockSize);
+
+                IProgress<int> progress = new Progress<int>(noItems => 
+                {
+                    progressBar.Value = noItems;
+                });
 
                 stopWatch.Start();
 
                 IImageGenerator generator = new ImageGenerator(
                     new ClosestImageSelector(),
-                    new AverageColorCalculator());
+                    new AverageColorCalculator(),
+                    progress);
 
                 WriteableBitmap newImage = await generator.GenerateImage(image, averageColors, blockSize);
 

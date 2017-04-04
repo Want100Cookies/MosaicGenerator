@@ -14,11 +14,13 @@ namespace MosaicGenerator.Implementations
     {
         private readonly IClosestImageSelector closestImageSelector;
         private readonly IAverageColorCalculator averageColorCalculator;
+        private IProgress<int> progress;
 
-        public ImageGenerator(IClosestImageSelector closestImageSelector, IAverageColorCalculator averageColorCalculator)
+        public ImageGenerator(IClosestImageSelector closestImageSelector, IAverageColorCalculator averageColorCalculator, IProgress<int> progress)
         {
             this.closestImageSelector = closestImageSelector;
             this.averageColorCalculator = averageColorCalculator;
+            this.progress = progress;
         }
 
         public async Task<WriteableBitmap> GenerateImage(IImage image, IDictionary<Color, List<IImage>> lookup, int blockSize)
@@ -55,6 +57,8 @@ namespace MosaicGenerator.Implementations
                     new Windows.Foundation.Rect(x, y, blockSize, blockSize),
                     current,
                     new Windows.Foundation.Rect(0, 0, current.PixelWidth, current.PixelHeight));
+
+                progress.Report(i);
             }
 
             return destBitmap;
