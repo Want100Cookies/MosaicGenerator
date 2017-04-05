@@ -17,9 +17,9 @@ namespace MosaicGenerator.Implementations
 
             for (int i = 0; i < colors.Length; i += 4)
             {
-                r += colors[i];
+                b += colors[i];
                 g += colors[i + 1];
-                b += colors[i + 2];
+                r += colors[i + 2];
             }
 
             float arrayLength = colors.Length / 4;
@@ -31,37 +31,37 @@ namespace MosaicGenerator.Implementations
         {
             byte[] pixels = await image.GetPixels();
             int width = await image.GetWidth();
-            int height = await image.GetHeigth();
+            int height = await image.GetHeight();
 
             List<Color> colors = new List<Color>();
 
-            for (int i = 0; i < width; i += blockSize)
+            for (int j = 0; j < height; j += blockSize) // y
             {
-                for (int j = height - blockSize; j > -blockSize; j -= blockSize)
+                for (int i = 0; i < width; i += blockSize) // x
                 {
                     int total = 0;
                     float R = 0;
                     float G = 0;
                     float B = 0;
 
-                    for (int k = 0; k < blockSize; k++)
+                    for (int k = 0; k < blockSize; k++) // x
                     {
-                        for (int l = 0; l < blockSize; l++)
+                        for (int l = 0; l < blockSize; l++) // y
                         {
                             int x = i + k;
                             int y = j + l;
 
-                            int pixelLocation = (x + y) * 4;
+                            int pixelLocation = x * 4 + y * 4 * width;
 
                             total++;
 
-                            R += pixels[pixelLocation];
+                            B += pixels[pixelLocation];
                             G += pixels[pixelLocation + 1];
-                            B += pixels[pixelLocation + 2];
+                            R += pixels[pixelLocation + 2];
                         }
                     }
 
-                    total = total / 2;
+                    //total = total / 2;
 
                     Color color = Color.FromArgb(
                         255,

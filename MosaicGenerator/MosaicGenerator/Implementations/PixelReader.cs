@@ -14,7 +14,7 @@ namespace MosaicGenerator.Implementations
         {
             //Get the pixel provider
             PixelDataProvider pixels = await decoder.GetPixelDataAsync(
-                BitmapPixelFormat.Rgba8,
+                BitmapPixelFormat.Bgra8,
                 BitmapAlphaMode.Straight,
                 new BitmapTransform(),
                 ExifOrientationMode.RespectExifOrientation,

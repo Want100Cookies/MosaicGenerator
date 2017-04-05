@@ -122,11 +122,11 @@ namespace MosaicGenerator
             {
                 IImage image = new Implementations.Image(file);
 
-                int blockSize = 10;
+                int blockSize = 40;
 
                 Stopwatch stopWatch = new Stopwatch();
 
-                progressBar.Maximum = (await image.GetWidth() * await image.GetHeigth()) / (blockSize * blockSize);
+                progressBar.Maximum = (await image.GetWidth() * await image.GetHeight()) / (blockSize * blockSize);
 
                 IProgress<int> progress = new Progress<int>(noItems => 
                 {

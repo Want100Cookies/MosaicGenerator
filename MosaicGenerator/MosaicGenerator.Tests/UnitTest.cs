@@ -10,8 +10,21 @@ using System.Collections.Generic;
 namespace MosaicGenerator.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTest
     {
+        [TestMethod]
+        public async Task TestBlockAverageCalculator()
+        {
+            var calculator = new AverageColorCalculator();
+            var colors = await calculator.CalculateAverage(new DummyImage(), 2);
+
+            Assert.AreEqual(4, colors.Length);
+            Assert.AreEqual(Color.FromArgb(0xFF, 0x00, 0x00, 0xFF), colors[0]);
+            Assert.AreEqual(Color.FromArgb(0xFF, 0x00, 0xFF, 0x00), colors[1]);
+            Assert.AreEqual(Color.FromArgb(0xFF, 0xFF, 0x00, 0x00), colors[2]);
+            Assert.AreEqual(Color.FromArgb(0xFF, 0xFF, 0xFF, 0x00), colors[3]);
+        }
+
         //[TestMethod]
         //public async Task TestAverageCalculator()
         //{

@@ -36,7 +36,7 @@ namespace MosaicGenerator.Implementations
             }
         }
 
-        public async Task<int> GetHeigth()
+        public async Task<int> GetHeight()
         {
             using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
             {

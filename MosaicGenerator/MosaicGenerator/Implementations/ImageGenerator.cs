@@ -35,7 +35,7 @@ namespace MosaicGenerator.Implementations
             }
 
             int width = await image.GetWidth();
-            int height = await image.GetHeigth();
+            int height = await image.GetHeight();
             int cols = width / blockSize;
 
             WriteableBitmap destBitmap = new WriteableBitmap(width, height);
@@ -44,7 +44,7 @@ namespace MosaicGenerator.Implementations
             {
                 byte[] currentPixels = await closestImages[i].GetPixels();
                 int currentWidth = await closestImages[i].GetWidth();
-                int currentHeight = await closestImages[i].GetHeigth();
+                int currentHeight = await closestImages[i].GetHeight();
 
                 WriteableBitmap current = new WriteableBitmap(currentWidth, currentHeight);
 
@@ -52,6 +52,8 @@ namespace MosaicGenerator.Implementations
 
                 int x = (i % cols) * blockSize;
                 int y = (i / cols) * blockSize;
+
+                Debug.WriteLine($"X={x} Y={y} Cols={cols}");
 
                 destBitmap.Blit(
                     new Windows.Foundation.Rect(x, y, blockSize, blockSize),

@@ -11,6 +11,6 @@ namespace MosaicGenerator.Abstractions
         Task<byte[]> GetPixels();
         string GetFileName();
         Task<int> GetWidth();
-        Task<int> GetHeigth();
+        Task<int> GetHeight();
     }
 }
