@@ -11,5 +11,7 @@ namespace MosaicGenerator.Abstractions
         /// <param name="image">SoftwareBitmap to read from</param>
         /// <returns>Array of color data</returns>
         Task<byte[]> GetPixelData(BitmapDecoder decoder);
+
+        Task<byte[]> GetResizedPixelData(BitmapDecoder decoder, int width, int height);
     }
 }

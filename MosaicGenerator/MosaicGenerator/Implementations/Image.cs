@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace MosaicGenerator.Implementations
 {
@@ -56,5 +57,14 @@ namespace MosaicGenerator.Implementations
             }
         }
 
+        public async Task<byte[]> GetResizedPixels(int width, int height)
+        {
+            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+            {
+                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+
+                return await pixelReader.GetResizedPixelData(decoder, width, height);
+            }
+        }
     }
 }
