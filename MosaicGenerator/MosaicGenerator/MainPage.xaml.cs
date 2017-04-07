@@ -122,15 +122,25 @@ namespace MosaicGenerator
             {
                 IImage image = new Implementations.Image(file);
 
-                int blockSize = 40;
+                int blockSize = Int32.Parse(BlocksizeTextbox.Text);
 
                 Stopwatch stopWatch = new Stopwatch();
 
-                progressBar.Maximum = (await image.GetWidth() * await image.GetHeight()) / (blockSize * blockSize);
+                int width = await image.GetWidth();
+                int height = await image.GetHeight();
 
-                IProgress<int> progress = new Progress<int>(noItems => 
+                if (width % blockSize != 0)
                 {
-                    progressBar.Value = noItems;
+                    await new MessageDialog("Cannot use specified blocksize. Image width should be divisible by the blocksize!").ShowAsync();
+                    return;
+                }
+
+                progressBar.Maximum = (width * height) / (blockSize * blockSize);
+                progressBar.Value = 0;
+
+                IProgress<int> progress = new Progress<int>(noItems =>
+                {
+                    progressBar.Value++;
                 });
 
                 stopWatch.Start();
@@ -140,11 +150,19 @@ namespace MosaicGenerator
                     new AverageColorCalculator(),
                     progress);
 
-                WriteableBitmap newImage = await generator.GenerateImage(image, averageColors, blockSize);
+                byte[] newImageBytes = new byte[0];
+
+                await Task.Run(async () =>
+                {
+                     newImageBytes = await generator.GenerateImage(image, averageColors, blockSize);
+                });
 
                 stopWatch.Stop();
 
                 await new MessageDialog("Done in " + stopWatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
+
+                WriteableBitmap newImage = new WriteableBitmap(width, height);
+                newImage.FromByteArray(newImageBytes);
 
                 imageView.Source = newImage;
             }

@@ -12,6 +12,7 @@
         <ProgressBar x:Name="progressBar" Height="32" VerticalAlignment="Top" Margin="166,10,10,0"/>
         <Button x:Name="SelectDestBtn" Content="Select destination image" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Click="BtnSelectSourceClick" IsEnabled="False"/>
         <Image x:Name="imageView" Margin="10,84,10,10"/>
+        <TextBox x:Name="BlocksizeTextbox" HorizontalAlignment="Left" Margin="198,47,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" InputScope="Number" PlaceholderText="Blocksize" Width="176"/>
 
     </Grid>
 </Page>

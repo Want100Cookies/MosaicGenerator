@@ -7,6 +7,9 @@ using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage;
 using System.Diagnostics;
+using System.IO;
+using Windows.Storage.Streams;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace MosaicGenerator.Implementations
 {
@@ -15,6 +18,8 @@ namespace MosaicGenerator.Implementations
         private readonly IClosestImageSelector closestImageSelector;
         private readonly IAverageColorCalculator averageColorCalculator;
         private IProgress<int> progress;
+        private IImage[] closestImages;
+        private byte[] destBytes;
 
         public ImageGenerator(IClosestImageSelector closestImageSelector, IAverageColorCalculator averageColorCalculator, IProgress<int> progress)
         {
@@ -23,11 +28,11 @@ namespace MosaicGenerator.Implementations
             this.progress = progress;
         }
 
-        public async Task<WriteableBitmap> GenerateImage(IImage image, IDictionary<Color, List<IImage>> lookup, int blockSize)
+        public async Task<byte[]> GenerateImage(IImage image, IDictionary<Color, List<IImage>> lookup, int blockSize)
         {
             Color[] exampleBlocks = await averageColorCalculator.CalculateAverage(image, blockSize);
 
-            IImage[] closestImages = new IImage[exampleBlocks.Length];
+            closestImages = new IImage[exampleBlocks.Length];
 
             for (int i = 0; i < exampleBlocks.Length; i++)
             {
@@ -38,32 +43,40 @@ namespace MosaicGenerator.Implementations
             int height = await image.GetHeight();
             int cols = width / blockSize;
 
-            WriteableBitmap destBitmap = new WriteableBitmap(width, height);
+            destBytes = new byte[width * height * 4];
+
+            List<Task> taskList = new List<Task>();
 
             for (int i = 0; i < closestImages.Length; i++)
             {
-                byte[] currentPixels = await closestImages[i].GetPixels();
-                int currentWidth = await closestImages[i].GetWidth();
-                int currentHeight = await closestImages[i].GetHeight();
-
-                WriteableBitmap current = new WriteableBitmap(currentWidth, currentHeight);
-
-                current = WriteableBitmapExtensions.FromByteArray(current, currentPixels);
-
-                int x = (i % cols) * blockSize;
-                int y = (i / cols) * blockSize;
-
-                Debug.WriteLine($"X={x} Y={y} Cols={cols}");
-
-                destBitmap.Blit(
-                    new Windows.Foundation.Rect(x, y, blockSize, blockSize),
-                    current,
-                    new Windows.Foundation.Rect(0, 0, current.PixelWidth, current.PixelHeight));
-
-                progress.Report(i);
+                taskList.Add(GenerateImagePart(i, cols, blockSize, width));
             }
 
-            return destBitmap;
+            await Task.WhenAll(taskList);
+
+            return destBytes;
+        }
+
+        private async Task GenerateImagePart(int i, int cols, int blockSize, int destWidth)
+        {
+            byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
+
+            int x = (i % cols) * blockSize;
+            int y = (i / cols) * blockSize;
+
+            int byteBlockWidth = blockSize * 4;
+
+            for (int j = 0; j < blockSize; j++)
+            {
+                int destinationIndex = x * 4 + y * 4 * destWidth;
+                int sourceIndex = j * 4 * blockSize;
+
+                y++;
+
+                Array.Copy(currentPixels, sourceIndex, destBytes, destinationIndex, byteBlockWidth);
+            }
+
+            progress.Report(i);
         }
     }
 }
