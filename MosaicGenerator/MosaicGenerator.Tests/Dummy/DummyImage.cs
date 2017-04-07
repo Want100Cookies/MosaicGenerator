@@ -1,5 +1,6 @@
 ﻿using MosaicGenerator.Abstractions;
 using System.Threading.Tasks;
+using System;
 
 namespace MosaicGenerator.Tests.Dummy
 {
@@ -20,6 +21,11 @@ namespace MosaicGenerator.Tests.Dummy
                     0x00, 0x00, 0xFF, 0xFF,     0x00, 0x00, 0xFF, 0xFF,     0x00, 0xFF, 0xFF, 0xFF,     0x00, 0xFF, 0xFF, 0xFF,
                     0x00, 0x00, 0xFF, 0xFF,     0x00, 0x00, 0xFF, 0xFF,     0x00, 0xFF, 0xFF, 0xFF,     0x00, 0xFF, 0xFF, 0xFF
                 });
+        }
+
+        public Task<byte[]> GetResizedPixels(int width, int height)
+        {
+            throw new NotImplementedException();
         }
     }
 }

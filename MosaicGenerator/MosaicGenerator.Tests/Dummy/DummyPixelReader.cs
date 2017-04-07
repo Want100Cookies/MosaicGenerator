@@ -25,5 +25,10 @@ namespace MosaicGenerator.Tests.Dummy
         {
             throw new NotImplementedException();
         }
+
+        public Task<byte[]> GetResizedPixelData(BitmapDecoder decoder, int width, int height)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
