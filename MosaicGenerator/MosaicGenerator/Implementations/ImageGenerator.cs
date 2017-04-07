@@ -48,14 +48,14 @@ namespace MosaicGenerator.Implementations
                 blitTasks.Add(Task.Run(async () =>
                 {
                     var target = closestImages.Length - (Environment.ProcessorCount - _t - 1) * chunkSize;
-                    if(_t == Environment.ProcessorCount - 1)
+                    if (_t == Environment.ProcessorCount - 1)
                     {
                         target = closestImages.Length;
                     }
 
                     Debug.WriteLine($"starting blit task {_t} for {_t * chunkSize} to {target}");
 
-                    for(int i = _t * chunkSize; i < target; i++)
+                    for (int i = _t * chunkSize; i < target; i++)
                     {
                         byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
 

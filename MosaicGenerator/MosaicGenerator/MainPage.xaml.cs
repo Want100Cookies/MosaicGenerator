@@ -4,28 +4,16 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Search;
-using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace MosaicGenerator
 {
@@ -164,7 +152,7 @@ namespace MosaicGenerator
 
                 await Task.Run(async () =>
                 {
-                     newImageBytes = await generator.GenerateImage(image, averageColors, blockSize);
+                    newImageBytes = await generator.GenerateImage(image, averageColors, blockSize);
                 });
 
                 stopWatch.Stop();
@@ -196,7 +184,8 @@ namespace MosaicGenerator
             {
                 // The user cancelled the picking operation
                 return;
-            } else
+            }
+            else
             {
                 IImageSaver imageSaver = new ImageSaver();
                 await imageSaver.SaveImageAsync(outputBitmap, outputFile);

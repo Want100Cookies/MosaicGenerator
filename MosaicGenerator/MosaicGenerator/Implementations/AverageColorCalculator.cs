@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MosaicGenerator.Abstractions;
-using Windows.Graphics.Imaging;
 using Windows.UI;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MosaicGenerator.Implementations
 {
@@ -60,8 +57,6 @@ namespace MosaicGenerator.Implementations
                             R += pixels[pixelLocation + 2];
                         }
                     }
-
-                    //total = total / 2;
 
                     Color color = Color.FromArgb(
                         255,
