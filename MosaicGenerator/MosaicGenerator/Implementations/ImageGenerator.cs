@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MosaicGenerator.Abstractions;
-using Windows.Graphics.Imaging;
 using Windows.UI;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.Storage;
 using System.Diagnostics;
-using System.IO;
-using Windows.Storage.Streams;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace MosaicGenerator.Implementations
 {
@@ -45,27 +39,46 @@ namespace MosaicGenerator.Implementations
 
             destBytes = new byte[width * height * 4];
 
-            for (int i = 0; i < closestImages.Length; i++)
+            var blitTasks = new List<Task>();
+            int chunkSize = closestImages.Length / Environment.ProcessorCount;
+
+            for (int t = 0; t < Environment.ProcessorCount; t++)
             {
-                byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
-
-                int x = (i % cols) * blockSize;
-                int y = (i / cols) * blockSize;
-
-                int byteBlockWidth = blockSize * 4;
-
-                for (int j = 0; j < blockSize; j++)
+                int _t = t;
+                blitTasks.Add(Task.Run(async () =>
                 {
-                    int destinationIndex = x * 4 + y * 4 * width;
-                    int sourceIndex = j * 4 * blockSize;
+                    var target = closestImages.Length - (Environment.ProcessorCount - _t - 1) * chunkSize;
+                    if(_t == Environment.ProcessorCount - 1)
+                    {
+                        target = closestImages.Length;
+                    }
 
-                    y++;
+                    Debug.WriteLine($"starting blit task {_t} for {_t * chunkSize} to {target}");
 
-                    Array.Copy(currentPixels, sourceIndex, destBytes, destinationIndex, byteBlockWidth);
-                }
+                    for(int i = _t * chunkSize; i < target; i++)
+                    {
+                        byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
 
-                progress.Report(i);
+                        int x = (i % cols) * blockSize;
+                        int y = (i / cols) * blockSize;
+                        int byteBlockWidth = blockSize * 4;
+
+                        for (int j = 0; j < blockSize; j++)
+                        {
+                            int destinationIndex = x * 4 + y * 4 * width;
+                            int sourceIndex = j * 4 * blockSize;
+
+                            y++;
+
+                            Array.Copy(currentPixels, sourceIndex, destBytes, destinationIndex, byteBlockWidth);
+                        }
+
+                        progress.Report(i);
+                    }
+                }));
             }
+
+            await Task.WhenAll(blitTasks);
 
             return destBytes;
         }
