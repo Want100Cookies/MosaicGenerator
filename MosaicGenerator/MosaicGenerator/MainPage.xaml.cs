@@ -35,6 +35,7 @@ namespace MosaicGenerator
     public sealed partial class MainPage : Page
     {
         private IDictionary<Color, List<IImage>> averageColors;
+        private WriteableBitmap outputBitmap;
 
         public MainPage()
         {
@@ -49,6 +50,8 @@ namespace MosaicGenerator
             if (folder != null)
             {
                 SelectSrcBtn.IsEnabled = false;
+                SelectDestBtn.IsEnabled = false;
+                SaveBtn.IsEnabled = false;
 
                 IStorageFile[] filePaths = await folderReader.ReadFolderAsync(folder);
 
@@ -66,6 +69,7 @@ namespace MosaicGenerator
 
                 await new MessageDialog("Done in " + stopwatch.ElapsedMilliseconds + " milliseconds").ShowAsync();
 
+                SelectSrcBtn.IsEnabled = true;
                 SelectDestBtn.IsEnabled = true;
             }
 
@@ -120,6 +124,10 @@ namespace MosaicGenerator
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
+                SelectSrcBtn.IsEnabled = false;
+                SelectDestBtn.IsEnabled = false;
+                SaveBtn.IsEnabled = false;
+
                 IImage image = new Implementations.Image(file);
 
                 int blockSize = Int32.Parse(BlocksizeTextbox.Text);
@@ -132,6 +140,8 @@ namespace MosaicGenerator
                 if (width % blockSize != 0)
                 {
                     await new MessageDialog("Cannot use specified blocksize. Image width should be divisible by the blocksize!").ShowAsync();
+                    SelectSrcBtn.IsEnabled = true;
+                    SelectDestBtn.IsEnabled = true;
                     return;
                 }
 
@@ -165,6 +175,31 @@ namespace MosaicGenerator
                 newImage.FromByteArray(newImageBytes);
 
                 imageView.Source = newImage;
+                outputBitmap = newImage;
+
+                SelectSrcBtn.IsEnabled = true;
+                SelectDestBtn.IsEnabled = true;
+                SaveBtn.IsEnabled = true;
+            }
+        }
+
+        private async void SaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FileSavePicker fileSavePicker = new FileSavePicker();
+            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            fileSavePicker.FileTypeChoices.Add("JPEG files", new List<string>() { ".jpg" });
+            fileSavePicker.SuggestedFileName = "image";
+
+            var outputFile = await fileSavePicker.PickSaveFileAsync();
+
+            if (outputFile == null)
+            {
+                // The user cancelled the picking operation
+                return;
+            } else
+            {
+                IImageSaver imageSaver = new ImageSaver();
+                await imageSaver.SaveImageAsync(outputBitmap, outputFile);
             }
         }
     }

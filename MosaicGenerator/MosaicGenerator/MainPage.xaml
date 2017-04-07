@@ -12,7 +12,9 @@
         <ProgressBar x:Name="progressBar" Height="32" VerticalAlignment="Top" Margin="166,10,10,0"/>
         <Button x:Name="SelectDestBtn" Content="Select destination image" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Click="BtnSelectSourceClick" IsEnabled="False"/>
         <Image x:Name="imageView" Margin="10,84,10,10"/>
-        <TextBox x:Name="BlocksizeTextbox" HorizontalAlignment="Left" Margin="198,47,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" InputScope="Number" PlaceholderText="Blocksize" Width="176"/>
+        <TextBox x:Name="BlocksizeTextbox" HorizontalAlignment="Left" Margin="277,47,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" InputScope="Digits" PlaceholderText="Blocksize" Width="54"/>
+        <TextBlock HorizontalAlignment="Left" Margin="209,53,0,0" TextWrapping="Wrap" Text="Blocksize:" VerticalAlignment="Top"/>
+        <Button x:Name="SaveBtn" Content="Save as PNG" HorizontalAlignment="Left" Margin="346,47,0,0" VerticalAlignment="Top" Click="SaveBtn_Click" IsEnabled="False"/>
 
     </Grid>
 </Page>

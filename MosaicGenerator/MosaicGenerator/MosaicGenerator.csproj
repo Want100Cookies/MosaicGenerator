@@ -115,6 +115,7 @@
     <Compile Include="Implementations\FolderReader.cs" />
     <Compile Include="Implementations\Image.cs" />
     <Compile Include="Implementations\ImageGenerator.cs" />
+    <Compile Include="Implementations\ImageSaver.cs" />
     <Compile Include="Implementations\PixelReader.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
