@@ -45,38 +45,29 @@ namespace MosaicGenerator.Implementations
 
             destBytes = new byte[width * height * 4];
 
-            List<Task> taskList = new List<Task>();
-
             for (int i = 0; i < closestImages.Length; i++)
             {
-                taskList.Add(GenerateImagePart(i, cols, blockSize, width));
-            }
+                byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
 
-            await Task.WhenAll(taskList);
+                int x = (i % cols) * blockSize;
+                int y = (i / cols) * blockSize;
+
+                int byteBlockWidth = blockSize * 4;
+
+                for (int j = 0; j < blockSize; j++)
+                {
+                    int destinationIndex = x * 4 + y * 4 * width;
+                    int sourceIndex = j * 4 * blockSize;
+
+                    y++;
+
+                    Array.Copy(currentPixels, sourceIndex, destBytes, destinationIndex, byteBlockWidth);
+                }
+
+                progress.Report(i);
+            }
 
             return destBytes;
-        }
-
-        private async Task GenerateImagePart(int i, int cols, int blockSize, int destWidth)
-        {
-            byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
-
-            int x = (i % cols) * blockSize;
-            int y = (i / cols) * blockSize;
-
-            int byteBlockWidth = blockSize * 4;
-
-            for (int j = 0; j < blockSize; j++)
-            {
-                int destinationIndex = x * 4 + y * 4 * destWidth;
-                int sourceIndex = j * 4 * blockSize;
-
-                y++;
-
-                Array.Copy(currentPixels, sourceIndex, destBytes, destinationIndex, byteBlockWidth);
-            }
-
-            progress.Report(i);
         }
     }
 }
