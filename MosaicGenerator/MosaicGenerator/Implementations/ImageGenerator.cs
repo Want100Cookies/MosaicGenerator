@@ -18,6 +18,8 @@ namespace MosaicGenerator.Implementations
         private readonly IClosestImageSelector closestImageSelector;
         private readonly IAverageColorCalculator averageColorCalculator;
         private IProgress<int> progress;
+        private IImage[] closestImages;
+        private byte[] destBytes;
 
         public ImageGenerator(IClosestImageSelector closestImageSelector, IAverageColorCalculator averageColorCalculator, IProgress<int> progress)
         {
@@ -30,7 +32,7 @@ namespace MosaicGenerator.Implementations
         {
             Color[] exampleBlocks = await averageColorCalculator.CalculateAverage(image, blockSize);
 
-            IImage[] closestImages = new IImage[exampleBlocks.Length];
+            closestImages = new IImage[exampleBlocks.Length];
 
             for (int i = 0; i < exampleBlocks.Length; i++)
             {
@@ -41,34 +43,40 @@ namespace MosaicGenerator.Implementations
             int height = await image.GetHeight();
             int cols = width / blockSize;
 
-            byte[] destBytes = new byte[width * height * 4];
+            destBytes = new byte[width * height * 4];
 
-            //await Task.Run(async () =>
-            //{
+            List<Task> taskList = new List<Task>();
+
             for (int i = 0; i < closestImages.Length; i++)
             {
-                byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
-                
-                int x = (i % cols) * blockSize;
-                int y = (i / cols) * blockSize;
-
-                Debug.WriteLine($"X={x} Y={y} Cols={cols}");
-
-                for (int j = 0; j < blockSize; j++)
-                {
-                    int index = x * 4 + y * 4 * width;
-                    y++;
-
-                    Array.Copy(currentPixels, j * blockSize, destBytes, index, blockSize);
-                }
-
-
-                progress.Report(i);
+                taskList.Add(GenerateImagePart(i, cols, blockSize, width));
             }
-            //});
 
+            await Task.WhenAll(taskList);
 
             return destBytes;
+        }
+
+        private async Task GenerateImagePart(int i, int cols, int blockSize, int destWidth)
+        {
+            byte[] currentPixels = await closestImages[i].GetResizedPixels(blockSize, blockSize);
+
+            int x = (i % cols) * blockSize;
+            int y = (i / cols) * blockSize;
+
+            int byteBlockWidth = blockSize * 4;
+
+            for (int j = 0; j < blockSize; j++)
+            {
+                int destinationIndex = x * 4 + y * 4 * destWidth;
+                int sourceIndex = j * 4 * blockSize;
+
+                y++;
+
+                Array.Copy(currentPixels, sourceIndex, destBytes, destinationIndex, byteBlockWidth);
+            }
+
+            progress.Report(i);
         }
     }
 }

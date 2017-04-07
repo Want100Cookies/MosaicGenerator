@@ -129,11 +129,18 @@ namespace MosaicGenerator
                 int width = await image.GetWidth();
                 int height = await image.GetHeight();
 
+                if (width % blockSize != 0)
+                {
+                    await new MessageDialog("Cannot use specified blocksize. Image width should be divisible by the blocksize!").ShowAsync();
+                    return;
+                }
+
                 progressBar.Maximum = (width * height) / (blockSize * blockSize);
+                progressBar.Value = 0;
 
                 IProgress<int> progress = new Progress<int>(noItems =>
                 {
-                    progressBar.Value = noItems;
+                    progressBar.Value++;
                 });
 
                 stopWatch.Start();
@@ -143,7 +150,12 @@ namespace MosaicGenerator
                     new AverageColorCalculator(),
                     progress);
 
-                byte[] newImageBytes = await generator.GenerateImage(image, averageColors, blockSize);
+                byte[] newImageBytes = new byte[0];
+
+                await Task.Run(async () =>
+                {
+                     newImageBytes = await generator.GenerateImage(image, averageColors, blockSize);
+                });
 
                 stopWatch.Stop();
 
