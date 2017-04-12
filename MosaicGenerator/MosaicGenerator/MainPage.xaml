@@ -14,7 +14,12 @@
         <Image x:Name="imageView" Margin="10,84,10,10"/>
         <TextBox x:Name="BlocksizeTextbox" HorizontalAlignment="Left" Margin="277,47,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" InputScope="Digits" PlaceholderText="Blocksize" Width="54"/>
         <TextBlock HorizontalAlignment="Left" Margin="209,53,0,0" TextWrapping="Wrap" Text="Blocksize:" VerticalAlignment="Top"/>
-        <Button x:Name="SaveBtn" Content="Save as PNG" HorizontalAlignment="Left" Margin="346,47,0,0" VerticalAlignment="Top" Click="SaveBtn_Click" IsEnabled="False"/>
-
+        
+        
+        <Slider x:Name="AdjustSlider" HorizontalAlignment="Left" Margin="400,47,0,0" VerticalAlignment="Top" Width="100" ValueChanged="Slider_ValueChanged" Maximum="100" LargeChange="10"/>
+        <TextBlock HorizontalAlignment="Left" Margin="349,53,0,0" TextWrapping="Wrap" Text="Adjust:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="AdjustValueText" HorizontalAlignment="Left" Margin="510,53,0,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top"/>
+        
+        <Button x:Name="SaveBtn" Content="Save as PNG" HorizontalAlignment="Left" Margin="546,47,0,0" VerticalAlignment="Top" Click="SaveBtn_Click" IsEnabled="False"/>
     </Grid>
 </Page>

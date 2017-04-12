@@ -110,6 +110,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Implementations\AdjustedImage.cs" />
+    <Compile Include="Implementations\AdjustingImageSelector.cs" />
     <Compile Include="Implementations\AverageColorCalculator.cs" />
     <Compile Include="Implementations\ClosestImageSelector.cs" />
     <Compile Include="Implementations\FolderReader.cs" />

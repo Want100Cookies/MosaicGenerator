@@ -143,8 +143,12 @@ namespace MosaicGenerator
 
                 stopWatch.Start();
 
+                IClosestImageSelector colorSelector = AdjustSlider.Value > 0 ?
+                    (IClosestImageSelector)new AdjustingImageSelector((float)AdjustSlider.Value / 100) :
+                    new ClosestImageSelector();
+
                 IImageGenerator generator = new ImageGenerator(
-                    new ClosestImageSelector(),
+                    colorSelector,
                     new AverageColorCalculator(),
                     progress);
 
@@ -190,6 +194,11 @@ namespace MosaicGenerator
                 IImageSaver imageSaver = new ImageSaver();
                 await imageSaver.SaveImageAsync(outputBitmap, outputFile);
             }
+        }
+
+        private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            AdjustValueText.Text = $"{(int)AdjustSlider.Value}%";
         }
     }
 }

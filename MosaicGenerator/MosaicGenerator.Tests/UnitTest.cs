@@ -1,10 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MosaicGenerator.Abstractions;
 using MosaicGenerator.Tests.Dummy;
 using System.Threading.Tasks;
 using Windows.UI;
 using MosaicGenerator.Implementations;
-using Windows.Graphics.Imaging;
+using MosaicGenerator.Abstractions;
 using System.Collections.Generic;
 
 namespace MosaicGenerator.Tests
@@ -28,13 +27,13 @@ namespace MosaicGenerator.Tests
         //[TestMethod]
         //public async Task TestAverageCalculator()
         //{
-            
+
         //    //var white = Color.FromArgb(0, 255, 255, 255);
         //    //var reader = new DummyPixelReader(white);
         //    //IAverageColorCalculator calculator = new AverageColorCalculator();
 
         //    //var average = calculator.CalculateAverage(null);
-            
+
         //    //Assert.AreEqual(white, average);
         //}
 
@@ -71,9 +70,14 @@ namespace MosaicGenerator.Tests
 
         //    var originalColor = Color.FromArgb(0, 255, 255, 255);
 
-        //    var colorDict = new Dictionary<Color, List<SoftwareBitmap>>();
+        //    var colorDict = new Dictionary<Color, List<IImage>>();
 
-        //    var closestBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, 5, 5);
+        //    var closestBitmap = new DummyImage(new byte[] {
+        //        0xFF, 0x00, 0x00, 0xFF,     0xFF, 0x00, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,
+        //        0xFF, 0x00, 0x00, 0xFF,     0xFF, 0x00, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,
+        //        0xFF, 0x00, 0x00, 0xFF,     0xFF, 0x00, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,
+        //        0xFF, 0x00, 0x00, 0xFF,     0xFF, 0x00, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF,     0x00, 0xFF, 0x00, 0xFF
+        //    }, 4, 4);
         //    var closestColor = originalColor;
 
         //    colorDict.Add(closestColor, new List<SoftwareBitmap> { closestBitmap });
